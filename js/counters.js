@@ -4,14 +4,14 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
   const increase = controls.querySelector('[data-step="1"]');
   const key = "munchkin." + controls.dataset.counter;
   const isLevel = controls.dataset.counter === "level";
-  const minimum = isLevel ? 1 : Number.MIN_SAFE_INTEGER;
-  const maximum = isLevel ? 10 : Number.MAX_SAFE_INTEGER;
+  const minimum = isLevel ? 1 : -1000;
+  const maximum = isLevel ? 10 : 1000;
   let value = Number(output.value);
   try {
     const stored = localStorage.getItem(key);
     const saved = Number(stored);
-    if (stored !== null && Number.isSafeInteger(saved) && saved >= minimum) {
-      value = Math.min(saved, maximum);
+    if (stored !== null && Number.isSafeInteger(saved)) {
+      value = Math.min(Math.max(saved, minimum), maximum);
     }
   } catch {
     // The counter also works when browser storage is unavailable.
