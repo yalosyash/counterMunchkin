@@ -9,25 +9,44 @@
   box-sizing: border-box;
 }
 html {
+  --content-width: 34rem;
   background: #e5ae61;
 }
 body {
   margin: 0;
+  isolation: isolate;
   color: #371909;
   font-family: Alegreya, Georgia, serif;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #e5ae61 url("../assets/images/parchment-backdrop.webp") center
+  background: #e5ae61 url("../assets/images/parchment-background.png") center
     top / 100% auto repeat-y;
 }
+body::before {
+  content: "";
+  position: fixed;
+  inset: auto 0 0;
+  width: min(100%, var(--content-width));
+  margin-inline: auto;
+  aspect-ratio: 3;
+  background: url("../assets/images/parchment-stones.png") center bottom /
+    100% auto no-repeat;
+  pointer-events: none;
+  z-index: -1;
+}
+@media (width > 34rem) {
+  body::before {
+    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+  }
+}
 main {
-  width: min(100%, 34rem);
+  width: min(100%, var(--content-width));
   min-height: 100vh;
   min-height: 100dvh;
   margin-inline: auto;
   padding: max(0.3rem, env(safe-area-inset-top))
     max(0.3rem, env(safe-area-inset-right))
-    max(clamp(1.4rem, 5vh, 3.75rem), env(safe-area-inset-bottom))
+    max(min(11vw, 4rem), clamp(1.4rem, 5vh, 3.75rem), env(safe-area-inset-bottom))
     max(0.3rem, env(safe-area-inset-left));
   display: grid;
   align-content: center;
@@ -36,12 +55,7 @@ main {
   container-type: inline-size;
 }
 .hero {
-  aspect-ratio: 2;
-  display: grid;
-  justify-items: center;
-  /* The parchment occupies the upper part of the illustration. */
-  grid-template-rows: 68% 1fr;
-  align-items: center;
+  aspect-ratio: 1100 / 550;
   position: relative;
   isolation: isolate;
 }
@@ -60,13 +74,18 @@ main {
   mask-composite: intersect;
 }
 h1 {
+  position: absolute;
+  /* The parchment center sits one third of the way down the artwork. */
+  top: calc(100% / 3);
+  left: 50%;
   margin: 0;
   font-size: clamp(2.7rem, 16.8cqw, 5.7rem);
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.025em;
   text-shadow: 0 1px #ffe8aa;
-  transform: rotate(-3deg);
+  /* Alegreya's visible capitals sit below the center of the line box. */
+  transform: translate(-50%, -58%) rotate(-3deg);
 }
 .sheet {
   width: 100%;
@@ -80,6 +99,10 @@ h1 {
 }
 .sheet[data-stat="strength"] {
   aspect-ratio: 1100 / 664;
+}
+.sheet .artwork {
+  filter: drop-shadow(0 3px 2px #37190980)
+    drop-shadow(0 7px 8px #37190960);
 }
 h2 {
   grid-row: 2;
