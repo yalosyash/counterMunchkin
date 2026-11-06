@@ -29,14 +29,20 @@ body::before {
   width: min(100%, var(--content-width));
   margin-inline: auto;
   aspect-ratio: 3;
-  background: url("../assets/images/parchment-stones.png") center bottom /
-    100% auto no-repeat;
+  background: url("../assets/images/parchment-stones.png") center bottom / 100%
+    auto no-repeat;
   pointer-events: none;
   z-index: -1;
 }
 @media (width > 34rem) {
   body::before {
-    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 3%,
+      #000 97%,
+      transparent
+    );
   }
 }
 main {
@@ -46,7 +52,11 @@ main {
   margin-inline: auto;
   padding: max(0.3rem, env(safe-area-inset-top))
     max(0.3rem, env(safe-area-inset-right))
-    max(min(11vw, 4rem), clamp(1.4rem, 5vh, 3.75rem), env(safe-area-inset-bottom))
+    max(
+      min(11vw, 4rem),
+      clamp(1.4rem, 5vh, 3.75rem),
+      env(safe-area-inset-bottom)
+    )
     max(0.3rem, env(safe-area-inset-left));
   display: grid;
   align-content: center;
@@ -101,8 +111,7 @@ h1 {
   aspect-ratio: 1100 / 664;
 }
 .sheet .artwork {
-  filter: drop-shadow(0 3px 2px #37190980)
-    drop-shadow(0 7px 8px #37190960);
+  filter: drop-shadow(0 3px 2px #37190980) drop-shadow(0 7px 8px #37190960);
 }
 h2 {
   grid-row: 2;
