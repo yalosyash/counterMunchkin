@@ -19,7 +19,7 @@ body {
   font-family: Alegreya, Georgia, serif;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #e5ae61 url("../assets/images/parchment-background.png") center
+  background: #e5ae61 url("../assets/images/parchment-background.webp") center
     top / 100% auto repeat-y;
 }
 body::before {
@@ -29,7 +29,7 @@ body::before {
   width: min(100%, var(--content-width));
   margin-inline: auto;
   aspect-ratio: 3;
-  background: url("../assets/images/parchment-stones.png") center bottom / 100%
+  background: url("../assets/images/parchment-stones.webp") center bottom / 100%
     auto no-repeat;
   pointer-events: none;
   z-index: -1;
