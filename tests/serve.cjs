@@ -9,7 +9,7 @@ const types = {
   ".svg": "image/svg+xml",
   ".png": "image/png",
   ".webp": "image/webp",
-  ".ttf": "font/ttf",
+  ".woff2": "font/woff2",
 };
 
 function createTestServer() {
