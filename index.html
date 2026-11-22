@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#3a2316" />
     <title>Манчкин — счётчик</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
-    <link rel="stylesheet" href="css/main.css?v=woff2-font-1" />
+    <link rel="stylesheet" href="css/main.css?v=new-game-20" />
     <script src="js/counters.js" defer></script>
   </head>
   <body>
@@ -48,29 +48,65 @@
           </button>
         </div>
       </section>
-      <section
-        class="sheet"
-        data-stat="strength"
-        aria-labelledby="strength-label"
+      <div class="strength-group">
+        <section
+          class="sheet"
+          data-stat="strength"
+          aria-labelledby="strength-label"
+        >
+          <img
+            class="artwork"
+            src="assets/images/strength-sheet.webp"
+            width="1100"
+            height="664"
+            alt=""
+          />
+          <h2 id="strength-label">Сила</h2>
+          <div class="controls" data-counter="strength">
+            <button type="button" data-step="-1" aria-label="Убавить силу">
+              <img src="assets/icons/minus.svg" alt="" />
+            </button>
+            <output aria-labelledby="strength-label">1</output>
+            <button type="button" data-step="1" aria-label="Прибавить силу">
+              <img src="assets/icons/plus.svg" alt="" />
+            </button>
+          </div>
+        </section>
+        <button class="game-button new-game" type="button" id="new-game">
+          Новая игра
+        </button>
+      </div>
+      <dialog
+        class="new-game-dialog"
+        id="new-game-dialog"
+        aria-labelledby="new-game-title"
+        aria-describedby="new-game-description"
       >
-        <img
-          class="artwork"
-          src="assets/images/strength-sheet.webp"
-          width="1100"
-          height="664"
-          alt=""
-        />
-        <h2 id="strength-label">Сила</h2>
-        <div class="controls" data-counter="strength">
-          <button type="button" data-step="-1" aria-label="Убавить силу">
-            <img src="assets/icons/minus.svg" alt="" />
-          </button>
-          <output aria-labelledby="strength-label">1</output>
-          <button type="button" data-step="1" aria-label="Прибавить силу">
-            <img src="assets/icons/plus.svg" alt="" />
-          </button>
+        <button
+          class="new-game-backdrop"
+          type="submit"
+          form="new-game-form"
+          value="cancel"
+          tabindex="-1"
+          aria-label="Закрыть окно"
+        ></button>
+        <div class="new-game-panel">
+          <h2 id="new-game-title">Начать новую игру?</h2>
+          <p id="new-game-description">Уровень и сила сбросятся до 1.</p>
+          <form class="new-game-actions" id="new-game-form" method="dialog">
+            <button class="game-button" type="submit" value="cancel" autofocus>
+              Отмена
+            </button>
+            <button
+              class="game-button game-button-primary"
+              type="submit"
+              value="start"
+            >
+              Начать
+            </button>
+          </form>
         </div>
-      </section>
+      </dialog>
     </main>
   </body>
 </html>

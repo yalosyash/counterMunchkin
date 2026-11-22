@@ -32,7 +32,7 @@ body::before {
   background: url("../assets/images/parchment-stones.webp") center bottom / 100%
     auto no-repeat;
   pointer-events: none;
-  z-index: -1;
+  z-index: 1;
 }
 @media (width > 34rem) {
   body::before {
@@ -46,22 +46,22 @@ body::before {
   }
 }
 main {
+  --counter-button-size: clamp(44px, 18cqw, 6rem);
+  --sheet-gap: 0.25rem;
+  /* At the center of the 1632px stone artwork, the ground starts 41px up. */
+  --ground-offset: calc(min(100%, var(--content-width)) * 41 / 1632);
   width: min(100%, var(--content-width));
   min-height: 100vh;
   min-height: 100dvh;
   margin-inline: auto;
   padding: max(0.3rem, env(safe-area-inset-top))
     max(0.3rem, env(safe-area-inset-right))
-    max(
-      min(11vw, 4rem),
-      clamp(1.4rem, 5vh, 3.75rem),
-      env(safe-area-inset-bottom)
-    )
+    max(var(--ground-offset), env(safe-area-inset-bottom))
     max(0.3rem, env(safe-area-inset-left));
   display: grid;
-  align-content: center;
+  align-content: end;
   grid-template-columns: minmax(0, 1fr);
-  gap: 0.25rem;
+  gap: var(--sheet-gap);
   container-type: inline-size;
 }
 .hero {
@@ -93,7 +93,6 @@ h1 {
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.025em;
-  text-shadow: 0 1px #ffe8aa;
   /* Alegreya's visible capitals sit below the center of the line box. */
   transform: translate(-50%, -58%) rotate(-3deg);
 }
@@ -120,7 +119,6 @@ h2 {
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.025em;
-  text-shadow: 0 1px #fff1c6;
 }
 .controls {
   grid-row: 3;
@@ -145,7 +143,7 @@ output.wide {
 button {
   display: grid;
   place-items: center;
-  width: clamp(44px, 18cqw, 6rem);
+  width: var(--counter-button-size);
   aspect-ratio: 1;
   min-height: 44px;
   padding: 0;
@@ -172,4 +170,113 @@ button:focus-visible {
 button:disabled {
   filter: saturate(0.7) brightness(0.95);
   cursor: default;
+}
+.game-button {
+  width: auto;
+  aspect-ratio: auto;
+  padding: 5px 22px;
+  border: 1px solid #80512c;
+  border-radius: 9px;
+  background: #f7d793;
+  color: #48240f;
+  font:
+    750 1.1875rem/1.2 Alegreya,
+    Georgia,
+    serif;
+}
+.strength-group {
+  /* Keep the 390px mockup proportions as the counter buttons scale. */
+  --new-game-unit: calc(var(--counter-button-size) / 68.47);
+  /* The 1100px paper images add 17px + 7px at the seam, and 6px below Strength. */
+  --paper-gap: calc(var(--sheet-gap) + 100cqw * 24 / 1100);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: calc(var(--paper-gap) - 100cqw * 6 / 1100);
+  padding-block-end: var(--paper-gap);
+}
+.new-game {
+  position: relative;
+  justify-self: center;
+  inline-size: calc(132 * var(--new-game-unit));
+  max-inline-size: 100%;
+  min-height: calc(36 * var(--new-game-unit));
+  padding: calc(4 * var(--new-game-unit)) calc(16 * var(--new-game-unit));
+  border-radius: calc(7.5 * var(--new-game-unit));
+  font-size: max(14px, calc(17 * var(--new-game-unit)));
+}
+.new-game::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline: 0;
+  min-height: 44px;
+  transform: translateY(-50%);
+}
+.new-game-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 16px;
+  border: 0;
+  background: transparent;
+}
+.new-game-dialog[open] {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+}
+.new-game-dialog::backdrop {
+  background: #2e1a11a0;
+}
+.new-game-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  background: transparent;
+}
+.new-game-backdrop:active {
+  transform: none;
+}
+.new-game-panel {
+  position: relative;
+  width: min(328px, 100%);
+  max-height: 100%;
+  overflow: auto;
+  padding: 20px;
+  border: 2px solid #80512c;
+  border-radius: 14px;
+  background:
+    linear-gradient(to bottom, #80512c40, transparent 24% 76%, #80512c40),
+    linear-gradient(#fae2ad80, #fae2ad80),
+    #fae2ad url("../assets/images/parchment-background.webp") center / cover
+      no-repeat;
+  color: #371909;
+  box-shadow: 0 8px 28px #25150b7f;
+}
+.new-game-dialog h2 {
+  font-size: 1.6875rem;
+}
+.new-game-dialog p {
+  margin: 10px 0 18px;
+  font-size: 1.1875rem;
+  line-height: 1.25;
+}
+.new-game-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.new-game-actions .game-button {
+  padding-inline: 12px;
+}
+.game-button-primary {
+  background: #69381e;
+  color: #ffebbe;
 }

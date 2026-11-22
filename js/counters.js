@@ -1,4 +1,4 @@
-const counterUpdates = new Map();
+const counters = new Map();
 
 for (const controls of document.querySelectorAll("[data-counter]")) {
   const output = controls.querySelector("output");
@@ -9,7 +9,8 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
   const isLevel = counter === "level";
   const minimum = isLevel ? 1 : -1000;
   const maximum = isLevel ? 10 : 1000;
-  let value = Number(output.value);
+  const initialValue = Number(output.value);
+  let value = initialValue;
   try {
     const stored = localStorage.getItem(key);
     const saved = Number(stored);
@@ -28,11 +29,7 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
     increase.disabled = value >= maximum;
   }
 
-  function change(step) {
-    const next = Math.min(Math.max(value + step, minimum), maximum);
-    const delta = next - value;
-    if (delta === 0) return;
-
+  function setValue(next) {
     value = next;
     render();
     try {
@@ -40,7 +37,15 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
     } catch {
       // Keep the current value in memory for this page session.
     }
-    if (isLevel) counterUpdates.get("strength")?.(delta);
+  }
+
+  function change(step) {
+    const next = Math.min(Math.max(value + step, minimum), maximum);
+    const delta = next - value;
+    if (delta === 0) return;
+
+    setValue(next);
+    if (isLevel) counters.get("strength")?.change(delta);
   }
 
   controls.addEventListener("click", (event) => {
@@ -49,6 +54,15 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
     change(Number(button.dataset.step));
   });
 
-  counterUpdates.set(counter, change);
+  counters.set(counter, { change, reset: () => setValue(initialValue) });
   render();
 }
+
+const newGameButton = document.querySelector("#new-game");
+const newGameDialog = document.querySelector("#new-game-dialog");
+
+newGameButton.addEventListener("click", () => newGameDialog.showModal());
+newGameDialog.querySelector("form").addEventListener("submit", (event) => {
+  if (event.submitter?.value !== "start") return;
+  for (const counter of counters.values()) counter.reset();
+});

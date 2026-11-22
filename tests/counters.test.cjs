@@ -36,8 +36,16 @@ function setup(saved = {}, storageAvailable = true) {
     };
   }
 
+  const form = { addEventListener() {} };
+  const elements = {
+    "#new-game": { addEventListener() {} },
+    "#new-game-dialog": { querySelector: () => form },
+  };
   script.runInNewContext({
-    document: { querySelectorAll: () => Object.values(counters) },
+    document: {
+      querySelectorAll: () => Object.values(counters),
+      querySelector: (selector) => elements[selector],
+    },
     localStorage: {
       getItem(key) {
         if (!storageAvailable) throw new Error("Storage unavailable");

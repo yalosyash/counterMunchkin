@@ -62,6 +62,99 @@ test("партия восстанавливается после перезаг�
   await expect(page.getByRole("status", { name: "Сила" })).toHaveText("1");
 });
 
+test("новая партия сбрасывает оба счётчика только после подтверждения", async ({
+  page,
+  context,
+}) => {
+  await page.evaluate(() => {
+    localStorage.setItem("munchkin.level", "8");
+    localStorage.setItem("munchkin.strength", "23");
+  });
+  await page.reload();
+
+  const newGame = page.getByRole("button", { name: "Новая игра" });
+  const dialog = page.getByRole("dialog", { name: "Начать новую игру?" });
+  const cancel = dialog.getByRole("button", { name: "Отмена" });
+  const start = dialog.getByRole("button", { name: "Начать" });
+  const level = page.getByRole("status", { name: "Уровень" });
+  const strength = page.getByRole("status", { name: "Сила" });
+
+  await newGame.press("Enter");
+  await expect(cancel).toBeFocused();
+  await cancel.click();
+  await expect(dialog).toBeHidden();
+  await expect(newGame).toBeFocused();
+  await expect(level).toHaveText("8");
+  await expect(strength).toHaveText("23");
+  await page.reload();
+  await expect(level).toHaveText("8");
+  await expect(strength).toHaveText("23");
+
+  await newGame.click();
+  await cancel.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(level).toHaveText("8");
+  await expect(strength).toHaveText("23");
+
+  await newGame.click();
+  await dialog.locator(".new-game-panel").click({ position: { x: 8, y: 8 } });
+  await expect(dialog).toBeVisible();
+  await page.mouse.click(8, 8);
+  await expect(dialog).toBeHidden();
+  await expect(newGame).toBeFocused();
+  await expect(level).toHaveText("8");
+  await expect(strength).toHaveText("23");
+
+  await newGame.click();
+  await start.click();
+  await expect(dialog).toBeHidden();
+  await expect(level).toHaveText("1");
+  await expect(strength).toHaveText("1");
+  await expect(
+    page.getByRole("button", { name: "Убавить уровень" }),
+  ).toBeDisabled();
+
+  await page.reload();
+  await expect(level).toHaveText("1");
+  await expect(strength).toHaveText("1");
+
+  const otherTab = await context.newPage();
+  await otherTab.goto(page.url());
+  await expect(otherTab.getByRole("status", { name: "Уровень" })).toHaveText(
+    "1",
+  );
+  await expect(otherTab.getByRole("status", { name: "Сила" })).toHaveText("1");
+});
+
+test.describe("сенсорный экран", () => {
+  test.use({
+    hasTouch: true,
+    isMobile: true,
+    viewport: { width: 390, height: 844 },
+  });
+
+  test("касание фона закрывает диалог без pointerdown на диалоге", async ({
+    page,
+  }) => {
+    const newGame = page.getByRole("button", { name: "Новая игра" });
+    const dialog = page.getByRole("dialog");
+    await newGame.tap();
+    await expect(dialog).toBeVisible();
+
+    await page.evaluate(() => {
+      document.addEventListener(
+        "pointerdown",
+        (event) => {
+          event.stopPropagation();
+        },
+        { capture: true, once: true },
+      );
+    });
+    await page.touchscreen.tap(12, 12);
+    await expect(dialog).toBeHidden();
+  });
+});
+
 test("сохранённые пограничные значения отключают соответствующие кнопки", async ({
   page,
 }) => {
