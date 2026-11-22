@@ -1,9 +1,12 @@
+const counterUpdates = new Map();
+
 for (const controls of document.querySelectorAll("[data-counter]")) {
   const output = controls.querySelector("output");
   const decrease = controls.querySelector('[data-step="-1"]');
   const increase = controls.querySelector('[data-step="1"]');
-  const key = "munchkin." + controls.dataset.counter;
-  const isLevel = controls.dataset.counter === "level";
+  const counter = controls.dataset.counter;
+  const key = "munchkin." + counter;
+  const isLevel = counter === "level";
   const minimum = isLevel ? 1 : -1000;
   const maximum = isLevel ? 10 : 1000;
   let value = Number(output.value);
@@ -25,17 +28,27 @@ for (const controls of document.querySelectorAll("[data-counter]")) {
     increase.disabled = value >= maximum;
   }
 
-  controls.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-step]");
-    if (!button || button.disabled) return;
-    value += Number(button.dataset.step);
+  function change(step) {
+    const next = Math.min(Math.max(value + step, minimum), maximum);
+    const delta = next - value;
+    if (delta === 0) return;
+
+    value = next;
     render();
     try {
       localStorage.setItem(key, String(value));
     } catch {
       // Keep the current value in memory for this page session.
     }
+    if (isLevel) counterUpdates.get("strength")?.(delta);
+  }
+
+  controls.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-step]");
+    if (!button || button.disabled) return;
+    change(Number(button.dataset.step));
   });
 
+  counterUpdates.set(counter, change);
   render();
 }
